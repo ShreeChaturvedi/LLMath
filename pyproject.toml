@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llmath"
+version = "0.1.0"
+description = "Theorem-aware mathematical proof assistant with retrieval-augmented generation"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Shree Chaturvedi", email = "chaturs@miamioh.edu" },
+    { name = "Jiahao Han", email = "hanj24@miamioh.edu" }
+]
+keywords = ["mathematics", "proof-assistant", "rag", "llm", "sympy", "deepseek"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+
+dependencies = [
+    "datasets>=2.14.0",
+    "sentence-transformers>=2.2.0",
+    "faiss-cpu>=1.7.0",
+    "sympy>=1.12",
+    "transformers>=4.35.0",
+    "accelerate>=0.24.0",
+    "peft>=0.6.0",
+    "trl>=0.7.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "torch>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.21.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+demo = [
+    "gradio>=4.0.0",
+]
+api = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+]
+quantization = [
+    "bitsandbytes>=0.41.0",
+]
+all = [
+    "llmath[dev,demo,api,quantization]",
+]
+
+[project.scripts]
+llmath-build-index = "llmath.scripts.build_index:main"
+llmath-train = "llmath.scripts.train_lora:main"
+llmath-evaluate = "llmath.scripts.evaluate:main"
+llmath-demo = "llmath.scripts.run_demo:main"
+
+[project.urls]
+Homepage = "https://github.com/ShreeChaturvedi/LLMath"
+Documentation = "https://github.com/ShreeChaturvedi/LLMath#readme"
+Repository = "https://github.com/ShreeChaturvedi/LLMath"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llmath"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=llmath --cov-report=term-missing"
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_ignores = true

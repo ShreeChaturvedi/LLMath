@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.spyderproject
+.spyproject
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
+
+# ML artifacts
+*.index
+*.faiss
+data/naturalproofs_faiss.index
+data/naturalproofs_meta.json
+data/deepseek_math_sft_lora/
+wandb/
+runs/
+*.pt
+*.bin
+*.safetensors
+checkpoints/
+
+# Secrets
+.env
+.env.local
+*.pem
+secrets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Documentation build
+docs/_build/
+site/
