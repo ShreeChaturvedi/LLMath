@@ -1,0 +1,2 @@
+# This directory stores generated data files (FAISS index, model artifacts)
+# These files are .gitignore'd but the directory structure is preserved
