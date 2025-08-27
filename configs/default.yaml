@@ -1,0 +1,64 @@
+# LLMath Default Configuration
+# Override values as needed for your environment
+
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  batch_size: 64
+  normalize: true
+
+retriever:
+  dataset_name: "wellecks/naturalproofs-gen"
+  dataset_split: "train"
+  index_path: "data/naturalproofs_faiss.index"
+  meta_path: "data/naturalproofs_meta.json"
+  text_field_candidates:
+    - "statement"
+    - "text"
+    - "page"
+    - "theorem"
+    - "content"
+  title_field_candidates:
+    - "title"
+    - "theorem"
+    - "name"
+    - "source"
+    - "section"
+    - "chapter"
+
+model:
+  model_name: "deepseek-ai/deepseek-math-7b-instruct"
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  lora_target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  adapter_path: null  # Set to path after training
+
+generation:
+  max_new_tokens: 512
+  min_new_tokens: 120
+  temperature: 0.6
+  top_p: 0.9
+  repetition_penalty: 1.05
+
+agent:
+  default_k: 5
+  max_snippet_chars: 400
+
+training:
+  output_dir: "data/deepseek_math_sft_lora"
+  per_device_batch_size: 2
+  gradient_accumulation_steps: 8
+  num_epochs: 4
+  learning_rate: 1.0e-4
+  warmup_ratio: 0.05
+  max_seq_length: 1024
+  max_examples: 300
