@@ -4,12 +4,16 @@ Combines retrieval, symbolic tools, and LLM generation into
 a single pipeline for answering mathematical questions.
 """
 
+import logging
+
 from dataclasses import dataclass
 from typing import Optional
 
 from ..config import AgentConfig, GenerationConfig
 from ..prompts.orchestrator import ToolOrchestrator, OrchestratorResult
 from ..inference.deepseek import DeepSeekMathModel
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -124,6 +128,7 @@ class MathAgent:
         k = k or self.config.default_k
 
         # Step 1-3: Orchestrate retrieval and tools
+        logger.debug("Running tool orchestration.")
         orch_result: OrchestratorResult = self.orchestrator.solve_with_tools(
             question=question,
             k=k,
@@ -131,6 +136,7 @@ class MathAgent:
         )
 
         # Step 4: Generate answer
+        logger.debug("Generating answer with model.")
         gen_result = self.model.generate(
             prompt=orch_result.prompt,
             max_new_tokens=max_new_tokens,

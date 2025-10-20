@@ -5,10 +5,13 @@ theorem snippets, including title extraction and text formatting.
 """
 
 from dataclasses import dataclass
+import logging
 from typing import Optional
 
 from .faiss_retriever import NaturalProofsRetriever
 from ..config import AgentConfig
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -60,9 +63,9 @@ class TheoremKB:
         self.title_field = self._pick_title_field()
 
         if self.title_field is None:
-            print("No title-like field found; using generic entry labels.")
+            logger.info("No title-like field found; using generic entry labels.")
         else:
-            print(f"Using title field: `{self.title_field}`")
+            logger.info("Using title field: `%s`", self.title_field)
 
     def _pick_title_field(self) -> Optional[str]:
         """Select a title field from available columns."""
@@ -110,6 +113,7 @@ class TheoremKB:
             List of TheoremSnippet objects.
         """
         k = k or self.config.default_k
+        logger.debug("Retrieving %s theorems for question.", k)
         raw = self.retriever.search(question, k=k)
 
         results: list[TheoremSnippet] = []

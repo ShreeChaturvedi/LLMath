@@ -7,10 +7,14 @@ Provides tools for:
 - Integration
 """
 
+import logging
+
 from sympy import symbols, Eq, sympify, simplify, diff, integrate, solve
 from sympy.core.expr import Expr
 
 from .base import BaseTool, ToolResult
+
+logger = logging.getLogger(__name__)
 
 
 def _to_expr(expr_str: str) -> Expr:
@@ -50,8 +54,10 @@ class SimplifyTool(BaseTool):
         try:
             expr = _to_expr(expr_str)
             result = str(simplify(expr))
+            logger.debug("Simplified expression.")
             return ToolResult(success=True, output=result)
         except Exception as e:
+            logger.exception("Simplify tool failed.")
             return ToolResult(success=False, error=f"simplify error: {e}")
 
 
@@ -89,8 +95,10 @@ class SolveTool(BaseTool):
                 eq = Eq(_to_expr(equation_str), 0)
 
             sol = solve(eq, x)
+            logger.debug("Solved equation.")
             return ToolResult(success=True, output=str(sol))
         except Exception as e:
+            logger.exception("Solve tool failed.")
             return ToolResult(success=False, error=f"solve error: {e}")
 
 
@@ -122,8 +130,10 @@ class DifferentiateTool(BaseTool):
             expr = _to_expr(expr_str)
             d = diff(expr, x)
             result = str(simplify(d))
+            logger.debug("Differentiated expression.")
             return ToolResult(success=True, output=result)
         except Exception as e:
+            logger.exception("Differentiate tool failed.")
             return ToolResult(success=False, error=f"differentiate error: {e}")
 
 
@@ -154,8 +164,10 @@ class IntegrateTool(BaseTool):
             x = symbols(symbol)
             expr = _to_expr(expr_str)
             integral_val = integrate(expr, x)
+            logger.debug("Integrated expression.")
             return ToolResult(success=True, output=str(integral_val))
         except Exception as e:
+            logger.exception("Integrate tool failed.")
             return ToolResult(success=False, error=f"integrate error: {e}")
 
 

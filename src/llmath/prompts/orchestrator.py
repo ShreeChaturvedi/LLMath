@@ -3,11 +3,15 @@
 Coordinates retrieval and symbolic tools to build complete prompts.
 """
 
+import logging
+
 from dataclasses import dataclass
 
 from .builder import build_math_prompt
 from ..retrieval.theorem_kb import TheoremKB, TheoremSnippet
 from ..tools.registry import ToolRegistry
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -71,15 +75,22 @@ class ToolOrchestrator:
         sympy_expressions = sympy_expressions or []
 
         # 1. Retrieve theorems
+        logger.debug("Retrieving theorems for question.")
         theorems = self.kb.get_theorems(question, k=k)
 
         # 2. Execute SymPy tools
         sympy_context: list[str] = []
         for expr in sympy_expressions:
+            logger.debug("Executing tool expression: %s", expr)
             formatted = self.tools.format_result(expr.strip())
             sympy_context.append(formatted)
 
         # 3. Build prompt
+        logger.debug(
+            "Building prompt with %s theorems and %s tool results.",
+            len(theorems),
+            len(sympy_context),
+        )
         prompt = build_math_prompt(question, theorems, sympy_context)
 
         return OrchestratorResult(

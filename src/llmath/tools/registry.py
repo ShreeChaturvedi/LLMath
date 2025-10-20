@@ -1,8 +1,11 @@
 """Tool registry for dynamic dispatch of tool calls."""
 
+import logging
 from typing import Optional
 
 from .base import BaseTool, ToolResult
+
+logger = logging.getLogger(__name__)
 
 
 class ToolRegistry:
@@ -27,6 +30,7 @@ class ToolRegistry:
             tool: Tool instance to register. Uses tool.name as the key.
         """
         self._tools[tool.name] = tool
+        logger.debug("Registered tool: %s", tool.name)
 
     def get(self, name: str) -> Optional[BaseTool]:
         """Get a tool by name.
@@ -78,8 +82,10 @@ class ToolRegistry:
         tool = self.get(tool_name)
 
         if tool is None:
+            logger.warning("Unknown tool requested: %s", tool_name)
             return ToolResult(success=False, error=f"Unknown tool: {tool_name}")
 
+        logger.debug("Dispatching tool: %s", tool_name)
         return tool.execute(args)
 
     def format_result(self, command: str) -> str:
