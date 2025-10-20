@@ -1,1 +1,9 @@
-"""API module for LLMath - Gradio and FastAPI interfaces."""
+─────┬──────────────────────────────────────────────────────────────────────────
+     │ STDIN
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ """API module for LLMath - web interfaces and demos."""
+   2 │ 
+   3 │ from .gradio_app import create_demo
+   4 │ 
+   5 │ __all__ = ["create_demo"]
+─────┴──────────────────────────────────────────────────────────────────────────
