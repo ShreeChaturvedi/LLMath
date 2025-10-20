@@ -54,20 +54,25 @@ def main():
     # Load config if provided
     if args.config:
         config = load_config(args.config)
-        model_name = config.embedding.model_name
     else:
-        model_name = "sentence-transformers/all-MiniLM-L6-v2"
+        config = load_config()
 
-    print(f"Building index with embedding model: {model_name}")
+    retriever_config = config.retriever.model_copy(
+        update={
+            "index_path": Path(args.index_path),
+            "meta_path": Path(args.meta_path),
+        }
+    )
+
+    print(f"Building index with embedding model: {config.embedding.model_name}")
     print(f"Index path: {args.index_path}")
     print(f"Metadata path: {args.meta_path}")
     print(f"Rebuild: {args.rebuild}")
     print()
 
     retriever = NaturalProofsRetriever(
-        model_name=model_name,
-        index_path=args.index_path,
-        meta_path=args.meta_path,
+        config=retriever_config,
+        embedding_config=config.embedding,
         rebuild_index=args.rebuild,
     )
 
@@ -76,7 +81,7 @@ def main():
     results = retriever.search("continuous function differentiable", k=3)
     print(f"Found {len(results)} results")
     for i, r in enumerate(results, 1):
-        print(f"  [{i}] score={r['score']:.3f}, idx={r['idx']}")
+        print(f"  [{i}] score={r.score:.3f}, idx={r.idx}")
 
     print("\nIndex built successfully!")
 
