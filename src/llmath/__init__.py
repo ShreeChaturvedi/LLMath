@@ -8,7 +8,7 @@ This package provides tools for mathematical reasoning by combining:
 """
 
 __version__ = "0.1.0"
-__author__ = "Shree Chaturvedi, Jiahao Han"
+__author__ = "Shree Chaturvedi"
 
 # Configuration
 from .config import (

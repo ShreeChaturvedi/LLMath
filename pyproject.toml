@@ -10,8 +10,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "Shree Chaturvedi", email = "chaturs@miamioh.edu" },
-    { name = "Jiahao Han", email = "hanj24@miamioh.edu" }
+    { name = "Shree Chaturvedi", email = "chaturs@miamioh.edu" }
 ]
 keywords = ["mathematics", "proof-assistant", "rag", "llm", "sympy", "deepseek"]
 classifiers = [

@@ -224,7 +224,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## Authors
 
 - Shree Chaturvedi (chaturs@miamioh.edu)
-- Jiahao Han (hanj24@miamioh.edu)
 
 ## Acknowledgments
 
