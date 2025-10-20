@@ -37,7 +37,7 @@ class RetrieverConfig(BaseModel):
 class ModelConfig(BaseModel):
     """Configuration for the DeepSeek-Math model."""
 
-    model_name: str = "deepseek-ai/deepseek-math-7b-instruct"
+    model_name: str = "deepseek-ai/deepseek-math-7b-rl"
     load_in_4bit: bool = True
     bnb_4bit_quant_type: str = "nf4"
     lora_r: int = 16
@@ -80,6 +80,12 @@ class TrainingConfig(BaseModel):
     warmup_ratio: float = 0.05
     max_seq_length: int = 1024
     max_examples: int = 300
+    bf16: bool = True
+    logging_steps: int = 10
+    save_steps: int = 200
+    save_total_limit: int = 2
+    optimizer: str = "adamw_torch"
+    lr_scheduler: str = "cosine"
 
 
 class LLMathConfig(BaseModel):

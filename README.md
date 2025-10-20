@@ -12,7 +12,7 @@ LLMath is a mathematical proof assistant that combines:
 
 1. **Retrieval-Augmented Generation (RAG)** - Retrieves relevant theorems and definitions from the NaturalProofs corpus
 2. **Symbolic Tool Use** - Leverages SymPy for symbolic computation (differentiation, integration, solving, simplification)
-3. **Fine-tuned LLM** - Uses DeepSeek-Math 7B with LoRA fine-tuning for proof-style answers
+3. **Fine-tuned LLM** - Uses DeepSeek-Math 7B RL with LoRA fine-tuning for proof-style answers
 
 ## Problem & Motivation
 
@@ -204,7 +204,7 @@ embedding:
   model_name: "sentence-transformers/all-MiniLM-L6-v2"
 
 model:
-  model_name: "deepseek-ai/deepseek-math-7b-instruct"
+  model_name: "deepseek-ai/deepseek-math-7b-rl"
   load_in_4bit: true
   lora_r: 16
   lora_alpha: 32
