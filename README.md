@@ -191,8 +191,7 @@ pytest tests/unit/test_sympy_tools.py
 ### Code Style
 
 The project uses:
-- Black for formatting
-- isort for import sorting
+- ruff for linting/formatting
 - mypy for type checking
 
 ## Configuration
