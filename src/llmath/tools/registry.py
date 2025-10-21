@@ -125,3 +125,34 @@ def create_default_registry() -> ToolRegistry:
     registry.register(IntegrateTool())
 
     return registry
+
+
+def create_react_registry(
+    retriever,
+    agent_config=None,
+    react_config=None,
+) -> ToolRegistry:
+    """Create a registry with SymPy tools plus retrieval."""
+    from ..config import AgentConfig, ReActConfig
+    from ..retrieval.theorem_kb import TheoremKB
+    from .retrieval_tool import RetrieveTool
+    from .sympy_tools import (
+        SimplifyTool,
+        SolveTool,
+        DifferentiateTool,
+        IntegrateTool,
+    )
+
+    agent_config = agent_config or AgentConfig()
+    react_config = react_config or ReActConfig()
+
+    kb = TheoremKB(retriever, config=agent_config)
+
+    registry = ToolRegistry()
+    registry.register(RetrieveTool(kb, default_k=react_config.retrieval_k))
+    registry.register(SimplifyTool())
+    registry.register(SolveTool())
+    registry.register(DifferentiateTool())
+    registry.register(IntegrateTool())
+
+    return registry
