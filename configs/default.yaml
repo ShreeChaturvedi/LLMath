@@ -53,6 +53,12 @@ agent:
   default_k: 5
   max_snippet_chars: 400
 
+react:
+  max_iterations: 8
+  max_tokens_per_step: 256
+  retrieval_k: 3
+  enable_self_verification: true
+
 training:
   output_dir: "data/deepseek_math_sft_lora"
   per_device_batch_size: 2

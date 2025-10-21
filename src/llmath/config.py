@@ -69,6 +69,15 @@ class AgentConfig(BaseModel):
     max_snippet_chars: int = 400
 
 
+class ReActConfig(BaseModel):
+    """Configuration for the ReAct agent loop."""
+
+    max_iterations: int = 8
+    max_tokens_per_step: int = 256
+    retrieval_k: int = 3
+    enable_self_verification: bool = True
+
+
 class TrainingConfig(BaseModel):
     """Configuration for LoRA fine-tuning."""
 
@@ -96,6 +105,7 @@ class LLMathConfig(BaseModel):
     model: ModelConfig = Field(default_factory=ModelConfig)
     generation: GenerationConfig = Field(default_factory=GenerationConfig)
     agent: AgentConfig = Field(default_factory=AgentConfig)
+    react: ReActConfig = Field(default_factory=ReActConfig)
     training: TrainingConfig = Field(default_factory=TrainingConfig)
 
 
