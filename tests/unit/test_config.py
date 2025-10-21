@@ -12,6 +12,7 @@ from llmath.config import (
     ModelConfig,
     GenerationConfig,
     AgentConfig,
+    ReActConfig,
     load_config,
     save_config,
 )
@@ -26,6 +27,7 @@ class TestDefaultConfig:
         assert isinstance(config.embedding, EmbeddingConfig)
         assert isinstance(config.retriever, RetrieverConfig)
         assert isinstance(config.model, ModelConfig)
+        assert isinstance(config.react, ReActConfig)
 
     def test_embedding_defaults(self):
         config = EmbeddingConfig()
@@ -49,6 +51,11 @@ class TestDefaultConfig:
         config = GenerationConfig()
         assert config.max_new_tokens == 512
         assert 0 < config.temperature < 1
+
+    def test_react_defaults(self):
+        config = ReActConfig()
+        assert config.max_iterations == 8
+        assert config.retrieval_k == 3
 
 
 class TestConfigLoading:
