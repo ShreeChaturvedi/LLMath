@@ -18,6 +18,7 @@ from .config import (
     ModelConfig,
     GenerationConfig,
     AgentConfig,
+    ReActConfig,
     TrainingConfig,
     load_config,
 )
@@ -39,6 +40,15 @@ def __getattr__(name):
     elif name == "create_math_agent":
         from .agent import create_math_agent
         return create_math_agent
+    elif name == "ReActAgent":
+        from .agent import ReActAgent
+        return ReActAgent
+    elif name == "create_react_agent":
+        from .agent import create_react_agent
+        return create_react_agent
+    elif name == "create_agent":
+        from .agent import create_agent
+        return create_agent
     elif name == "DeepSeekMathModel":
         from .inference import DeepSeekMathModel
         return DeepSeekMathModel
@@ -56,6 +66,7 @@ __all__ = [
     "ModelConfig",
     "GenerationConfig",
     "AgentConfig",
+    "ReActConfig",
     "TrainingConfig",
     "load_config",
     # Core components (lazy)
@@ -63,5 +74,8 @@ __all__ = [
     "TheoremKB",
     "MathAgent",
     "create_math_agent",
+    "ReActAgent",
+    "create_react_agent",
+    "create_agent",
     "DeepSeekMathModel",
 ]
