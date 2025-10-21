@@ -11,7 +11,8 @@ from .sympy_tools import (
     differentiate_expr,
     integrate_expr,
 )
-from .registry import ToolRegistry, create_default_registry
+from .retrieval_tool import RetrieveTool
+from .registry import ToolRegistry, create_default_registry, create_react_registry
 
 __all__ = [
     "BaseTool",
@@ -20,10 +21,12 @@ __all__ = [
     "SolveTool",
     "DifferentiateTool",
     "IntegrateTool",
+    "RetrieveTool",
     "simplify_expr",
     "solve_equation",
     "differentiate_expr",
     "integrate_expr",
     "ToolRegistry",
     "create_default_registry",
+    "create_react_registry",
 ]
