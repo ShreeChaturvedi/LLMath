@@ -13,7 +13,7 @@ from peft import PeftModel
 
 from ..config import ModelConfig, GenerationConfig
 from .model_loader import load_trained_model
-from .generation import clean_model_output
+from .generation import clean_model_output, truncate_at_stop_sequences
 
 
 @dataclass
@@ -133,6 +133,61 @@ class DeepSeekMathModel:
 
         return GenerationResult(
             text=cleaned_text,
+            raw_text=raw_text,
+            input_tokens=input_length,
+            output_tokens=len(generated_ids),
+        )
+
+    def generate_step(
+        self,
+        context: str,
+        system_prompt: str,
+        max_new_tokens: int = 256,
+        stop_sequences: Optional[list[str]] = None,
+    ) -> GenerationResult:
+        """Generate a single ReAct step.
+
+        Args:
+            context: Current conversation context (question + steps).
+            system_prompt: System instructions for ReAct formatting.
+            max_new_tokens: Maximum tokens to generate for the step.
+            stop_sequences: Optional list of stop sequences.
+
+        Returns:
+            GenerationResult with the step text and raw output.
+        """
+        stop_sequences = stop_sequences or ["</tool>", "</answer>"]
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": context},
+        ]
+
+        input_ids = self.tokenizer.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            return_tensors="pt",
+        ).to(self.model.device)
+
+        input_length = input_ids.shape[1]
+        temp = self.config.temperature
+
+        with torch.no_grad():
+            outputs = self.model.generate(
+                input_ids,
+                max_new_tokens=max_new_tokens,
+                do_sample=temp > 0,
+                temperature=temp if temp > 0 else 1.0,
+                top_p=self.config.top_p,
+                repetition_penalty=self.config.repetition_penalty,
+            )
+
+        generated_ids = outputs[0, input_length:]
+        raw_text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
+        truncated_text = truncate_at_stop_sequences(raw_text, stop_sequences)
+
+        return GenerationResult(
+            text=truncated_text,
             raw_text=raw_text,
             input_tokens=input_length,
             output_tokens=len(generated_ids),
