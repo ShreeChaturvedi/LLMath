@@ -76,7 +76,7 @@ def build_react_examples(
         query = " ".join(statement.split()[:12])
         snippet = _truncate(str(row[text_field]), 220)
 
-        observation = f"[T1] {title}: {snippet}"
+        observation = f"[T1] (idx={idx}) {title}: {snippet}"
         answer = (
             f"Using [T1], {_truncate(proof_text, 300)}\n"
             "Conclusion: The statement follows from the cited theorem."
