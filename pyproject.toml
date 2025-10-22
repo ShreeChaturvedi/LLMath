@@ -63,6 +63,8 @@ all = [
 llmath-build-index = "llmath.scripts.build_index:main"
 llmath-train = "llmath.scripts.train_lora:main"
 llmath-evaluate = "llmath.scripts.evaluate:main"
+llmath-benchmark = "llmath.scripts.run_benchmark:main"
+llmath-plot-benchmarks = "llmath.scripts.plot_benchmarks:main"
 llmath-demo = "llmath.scripts.run_demo:main"
 
 [project.urls]
