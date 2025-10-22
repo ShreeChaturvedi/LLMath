@@ -38,6 +38,13 @@ def main():
         help="Maximum training examples to use",
     )
     parser.add_argument(
+        "--mode",
+        type=str,
+        default="sft",
+        choices=["sft", "react"],
+        help="Training mode: sft or react",
+    )
+    parser.add_argument(
         "--epochs",
         type=int,
         default=None,
@@ -54,6 +61,7 @@ def main():
     )
     from llmath.training import (
         create_sft_dataset,
+        create_react_dataset,
         create_tokenize_function,
         train_lora,
     )
@@ -73,19 +81,29 @@ def main():
     print(f"Output: {output_dir}")
     print(f"Max examples: {args.max_examples}")
     print(f"Epochs: {config.training.num_epochs}")
+    print(f"Mode: {args.mode}")
+    print(f"Max seq length: {config.training.max_seq_length}")
     print()
 
     # Load retriever to get dataset
     print("Loading NaturalProofs dataset...")
     retriever = NaturalProofsRetriever(rebuild_index=False)
 
-    # Build SFT dataset
-    print("Building SFT dataset...")
-    sft_dataset = create_sft_dataset(
-        retriever.ds,
-        retriever.text_field,
-        max_examples=args.max_examples,
-    )
+    # Build dataset
+    if args.mode == "react":
+        print("Building ReAct dataset...")
+        sft_dataset = create_react_dataset(
+            retriever.ds,
+            retriever.text_field,
+            max_examples=args.max_examples,
+        )
+    else:
+        print("Building SFT dataset...")
+        sft_dataset = create_sft_dataset(
+            retriever.ds,
+            retriever.text_field,
+            max_examples=args.max_examples,
+        )
     print(f"Dataset size: {len(sft_dataset)}")
 
     # Load model and tokenizer
