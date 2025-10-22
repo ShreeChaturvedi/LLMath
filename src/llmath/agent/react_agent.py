@@ -23,6 +23,8 @@ class ReActResult:
     steps: list[ReActStep]
     iterations: int
     terminated_reason: str
+    input_tokens: int = 0
+    output_tokens: int = 0
 
 
 class ReActAgent:
@@ -46,6 +48,8 @@ class ReActAgent:
     def run(self, question: str) -> ReActResult:
         """Run the ReAct loop for a single question."""
         state = ReActState(question=question)
+        total_input_tokens = 0
+        total_output_tokens = 0
 
         for iteration in range(1, self.config.max_iterations + 1):
             context = state.build_context()
@@ -56,6 +60,8 @@ class ReActAgent:
                 max_new_tokens=self.config.max_tokens_per_step,
                 stop_sequences=["</tool>", "</answer>"],
             )
+            total_input_tokens += gen_result.input_tokens
+            total_output_tokens += gen_result.output_tokens
 
             parsed = self.parser.parse(gen_result.text)
             step = ReActStep(
@@ -84,6 +90,8 @@ class ReActAgent:
                     steps=state.steps,
                     iterations=iteration,
                     terminated_reason="answer",
+                    input_tokens=total_input_tokens,
+                    output_tokens=total_output_tokens,
                 )
 
             step.observation = (
@@ -97,6 +105,8 @@ class ReActAgent:
             steps=state.steps,
             iterations=self.config.max_iterations,
             terminated_reason="max_iterations",
+            input_tokens=total_input_tokens,
+            output_tokens=total_output_tokens,
         )
 
     def __call__(self, question: str) -> str:
