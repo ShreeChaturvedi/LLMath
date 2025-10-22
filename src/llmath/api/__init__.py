@@ -1,9 +1,5 @@
-─────┬──────────────────────────────────────────────────────────────────────────
-     │ STDIN
-─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ """API module for LLMath - web interfaces and demos."""
-   2 │ 
-   3 │ from .gradio_app import create_demo
-   4 │ 
-   5 │ __all__ = ["create_demo"]
-─────┴──────────────────────────────────────────────────────────────────────────
+"""API module for LLMath - web interfaces and demos."""
+
+from .gradio_app import create_demo
+
+__all__ = ["create_demo"]
