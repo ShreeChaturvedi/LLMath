@@ -87,7 +87,7 @@ class TrainingConfig(BaseModel):
     num_epochs: int = 4
     learning_rate: float = 1e-4
     warmup_ratio: float = 0.05
-    max_seq_length: int = 1024
+    max_seq_length: int = 2048
     max_examples: int = 300
     bf16: bool = True
     logging_steps: int = 10
