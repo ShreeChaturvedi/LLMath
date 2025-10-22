@@ -27,7 +27,7 @@ class RetrieveTool(BaseTool):
 
             lines = []
             for i, t in enumerate(theorems, 1):
-                lines.append(f"[T{i}] {t.title}: {t.snippet}")
+                lines.append(f"[T{i}] (idx={t.idx}) {t.title}: {t.snippet}")
             return ToolResult(success=True, output="\n".join(lines))
         except Exception as e:
             logger.exception("Retrieve tool failed.")

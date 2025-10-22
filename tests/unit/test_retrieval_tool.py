@@ -33,8 +33,8 @@ def test_retrieve_tool_formats_snippets():
 
     result = tool.execute("derivative rules")
     assert result.success is True
-    assert "[T1] Product Rule:" in result.output
-    assert "[T2] Chain Rule:" in result.output
+    assert "[T1] (idx=0) Product Rule:" in result.output
+    assert "[T2] (idx=1) Chain Rule:" in result.output
 
 
 def test_retrieve_tool_handles_empty_results():
