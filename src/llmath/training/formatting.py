@@ -19,12 +19,23 @@ def format_for_deepseek(
     by DeepSeek-Math for instruction tuning.
 
     Args:
-        examples: Dict with 'prompt' and 'response' lists.
+        examples: Dict with 'prompt'/'response' lists or 'messages' list.
         tokenizer: The tokenizer with chat template support.
 
     Returns:
         List of formatted text strings.
     """
+    if "messages" in examples:
+        texts = []
+        for messages in examples["messages"]:
+            text = tokenizer.apply_chat_template(
+                messages,
+                add_generation_prompt=False,
+                tokenize=False,
+            )
+            texts.append(text)
+        return texts
+
     texts = []
     for prompt, response in zip(examples["prompt"], examples["response"]):
         messages = [
