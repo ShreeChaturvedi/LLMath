@@ -39,6 +39,8 @@ python scripts/plot_benchmarks.py \
   --output-dir benchmarks/charts
 ```
 
+Plotting requires matplotlib (included in `.[dev]`).
+
 ### Output format
 
 Results are stored as JSON under `benchmarks/results.json`:
