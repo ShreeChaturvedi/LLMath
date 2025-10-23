@@ -1,0 +1,17 @@
+<svg width="720" height="260" viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="260" fill="#f8fafc"/>
+  <text x="20" y="30" font-family="Space Grotesk, sans-serif" font-size="18" fill="#111827">Accuracy</text>
+  <text x="20" y="55" font-family="Space Grotesk, sans-serif" font-size="12" fill="#6b7280">Placeholder chart. Run scripts/plot_benchmarks.py to regenerate.</text>
+  <g fill="#2f5d62">
+    <rect x="60" y="150" width="80" height="60" />
+    <rect x="200" y="130" width="80" height="80" />
+    <rect x="340" y="110" width="80" height="100" />
+    <rect x="480" y="90" width="80" height="120" />
+  </g>
+  <g font-family="Space Grotesk, sans-serif" font-size="12" fill="#111827">
+    <text x="60" y="230">baseline</text>
+    <text x="200" y="230">rag</text>
+    <text x="340" y="230">manual</text>
+    <text x="480" y="230">autonomous</text>
+  </g>
+</svg>
