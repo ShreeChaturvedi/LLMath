@@ -1,224 +1,147 @@
 # LLMath
 
-Theorem Retrieval-Augmented Generation with Agentic Tool Use for Mathematical Proofs
+Autonomous ReAct-style theorem-aware math assistant with retrieval and SymPy tools.
 
-> **Note**: This repository was created in January 2026. The codebase represents work
-> completed during the Fall 2025 semester (August-October 2025) for CSE 434 at Miami University,
-> subsequently refactored from a Jupyter notebook into a production-quality Python package.
+![CI](https://github.com/ShreeChaturvedi/LLMath/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+
+> This repository was created in January 2026. The codebase represents work
+> completed during the Fall 2025 semester (August-October 2025) for CSE 434 at
+> Miami University, subsequently refactored from a Jupyter notebook into a
+> production-quality Python package.
 
 ## Overview
 
 LLMath is a mathematical proof assistant that combines:
 
-1. **Retrieval-Augmented Generation (RAG)** - Retrieves relevant theorems and definitions from the NaturalProofs corpus
-2. **Symbolic Tool Use** - Leverages SymPy for symbolic computation (differentiation, integration, solving, simplification)
-3. **Fine-tuned LLM** - Uses DeepSeek-Math 7B RL with LoRA fine-tuning for proof-style answers
+1. **Retrieval-Augmented Generation (RAG)** - Retrieves theorems and definitions from NaturalProofs
+2. **Symbolic Tool Use** - Uses SymPy for differentiation, integration, solving, and simplification
+3. **Autonomous ReAct Agent** - The model decides when to retrieve or call tools
+4. **Fine-tuned LLM** - DeepSeek-Math 7B RL with LoRA adapters for proof-style answers
 
-## Problem & Motivation
+## ReAct Protocol
 
-LLMs answering mathematical questions frequently hallucinate, which is unacceptable in mathematics where claims must be justified via cited theorems and symbolic steps. LLMath addresses this by:
+LLMath uses a strict XML-style token protocol:
 
-- Retrieving theorems and definitions from a curated math corpus
-- Routing queries to theorem application and/or computation
-- Composing concise proof-style answers with explicit citations and tool-checked steps
-
-## Features
-
-- **NaturalProofs Retrieval**: Semantic search over 12,000+ theorem statements using FAISS and sentence-transformers
-- **SymPy Integration**: Symbolic differentiation, integration, equation solving, and simplification
-- **Proof-style Answers**: Structured responses with theorem citations ([T1], [T2]) and tool results ([S1], [S2])
-- **LoRA Fine-tuning**: Efficient training on mathematical proofs with 4-bit quantization
-- **Interactive Demo**: Gradio-based UI for exploring the system
-
-## Requirements
-
-- Python 3.10+
-- PyTorch with CUDA support (for GPU inference)
-- ~16GB VRAM for 4-bit quantized inference
-- ~8GB disk space for FAISS index
-
-## Installation
-
-```bash
-pip install llmath
+```
+<think>reasoning</think>
+<tool>tool_name: args</tool>
+<observe>result</observe>
+<answer>final answer</answer>
 ```
 
-Or install from source:
-
-```bash
-git clone https://github.com/ShreeChaturvedi/LLMath.git
-cd LLMath
-pip install -e ".[dev]"
-```
+Details: `docs/react-protocol.md`
 
 ## Quick Start
 
-### Using the Python API
-
-```python
-from llmath.retrieval import NaturalProofsRetriever
-from llmath.retrieval.theorem_kb import TheoremKB
-from llmath.tools import simplify_expr, solve_equation, differentiate_expr
-
-# Initialize retriever
-retriever = NaturalProofsRetriever()
-kb = TheoremKB(retriever)
-
-# Retrieve relevant theorems
-theorems = kb.get_theorems("derivative of product of functions", k=3)
-for t in theorems:
-    print(f"[{t.title}] {t.snippet[:100]}...")
-
-# Use symbolic tools
-print(differentiate_expr("x**2 * sin(x)"))  # -> 2*x*sin(x) + x**2*cos(x)
-print(solve_equation("x**2 - 1 = 0"))       # -> [-1, 1]
-```
-
-### Using the Full Agent (requires GPU)
-
-```python
-from llmath.agent import create_math_agent
-from llmath.retrieval import NaturalProofsRetriever
-
-retriever = NaturalProofsRetriever()
-agent = create_math_agent(retriever)
-
-result = agent.run(
-    question="Prove that the derivative of x**2*sin(x) is 2*x*sin(x) + x**2*cos(x).",
-    sympy_expressions=["diff: x**2*sin(x)"]
-)
-
-print(result.answer)
-```
-
-### CLI Scripts
-
 ```bash
-# Build the FAISS index (first-time setup)
+# 1) Install dependencies
+pip install -e ".[dev]"
+
+# 2) Build the FAISS index (first-time setup)
 python scripts/build_index.py --rebuild
 
-# Run LoRA fine-tuning
-python scripts/train_lora.py --epochs 4 --output-dir outputs/lora
-
-# Evaluate baseline vs agent
-python scripts/evaluate.py --adapter-path outputs/lora
-
-# Launch interactive demo
-python scripts/run_demo.py --share
+# 3) Launch the demo
+python scripts/run_demo.py
 ```
+
+## Features
+
+- **Autonomous Mode**: ReAct loop decides retrieval/tool calls per step
+- **Manual Mode**: Backward-compatible MathAgent with user-provided tool calls
+- **TheoremQA Benchmarking**: Baseline vs RAG vs Manual vs Autonomous modes
+- **Gradio Demo**: Reasoning trace, tool logs, retrieved theorems, exports
 
 ## Architecture
 
+```mermaid
+graph TD
+  Q[Question] -->|Manual| R[Retrieve Theorems]
+  R --> T[SymPy Tools]
+  T --> P[Prompt Builder]
+  P --> M[DeepSeek-Math 7B RL]
+  M --> A[Answer]
+
+  Q -->|Autonomous| S[ReAct Loop]
+  S --> R
+  S --> T
+  S --> A
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   User Query    │───▶│  Tool Registry  │───▶│   SymPy Tools   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                                             │
-         ▼                                             ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  NaturalProofs  │───▶│ Prompt Builder  │◀───│  Symbolic       │
-│  Retriever      │    │                 │    │  Results        │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                               │
-                               ▼
-                       ┌─────────────────┐
-                       │  DeepSeek-Math  │
-                       │  (LoRA tuned)   │
-                       └─────────────────┘
-                               │
-                               ▼
-                       ┌─────────────────┐
-                       │  Proof-style    │
-                       │  Answer         │
-                       └─────────────────┘
+
+More details: `ARCHITECTURE.md`
+
+## Benchmarking
+
+Run the benchmark:
+
+```bash
+python scripts/run_benchmark.py   --dataset theoremqa   --modes baseline,rag,manual,autonomous   --output benchmarks/results.json
+```
+
+Generate charts:
+
+```bash
+python scripts/plot_benchmarks.py   --input benchmarks/results.json   --output-dir benchmarks/charts
+```
+
+### Results (placeholder)
+
+| Mode | Accuracy | Token Efficiency | Notes |
+| --- | --- | --- | --- |
+| Baseline | TBD | TBD | No tools |
+| RAG | TBD | TBD | Retrieval only |
+| Manual | TBD | TBD | User-specified tools |
+| Autonomous | TBD | TBD | ReAct loop |
+
+![Accuracy](benchmarks/charts/accuracy.svg)
+![Token Efficiency](benchmarks/charts/token_efficiency.svg)
+
+## Training
+
+SFT training:
+
+```bash
+python scripts/train_lora.py --mode sft --epochs 4 --output-dir outputs/sft-lora
+```
+
+ReAct training:
+
+```bash
+python scripts/train_lora.py --mode react --epochs 4 --output-dir outputs/react-lora
+```
+
+## Development
+
+```bash
+pip install -e ".[dev]"
+ruff check .
+ruff format .
+mypy src/llmath
+pytest
 ```
 
 ## Project Structure
 
 ```
-llmath/
+LLMath/
 ├── src/llmath/
-│   ├── config.py          # Pydantic configuration
-│   ├── retrieval/         # FAISS-based theorem retrieval
-│   │   ├── faiss_retriever.py
-│   │   └── theorem_kb.py
-│   ├── tools/             # SymPy symbolic computation
-│   │   ├── sympy_tools.py
-│   │   └── registry.py
-│   ├── prompts/           # Prompt templates and orchestration
-│   │   ├── templates.py
-│   │   ├── builder.py
-│   │   └── orchestrator.py
-│   ├── inference/         # Model loading and generation
-│   │   ├── model_loader.py
-│   │   ├── generation.py
-│   │   └── deepseek.py
-│   ├── training/          # LoRA fine-tuning
-│   │   ├── data.py
-│   │   ├── formatting.py
-│   │   └── trainer.py
-│   ├── evaluation/        # Baseline comparison
-│   │   ├── baseline.py
-│   │   └── comparison.py
-│   ├── agent/             # Main agent
-│   │   └── math_agent.py
-│   └── api/               # Gradio interface
-│       └── gradio_app.py
-├── scripts/               # CLI entry points
-├── configs/               # YAML configurations
-├── tests/                 # Unit and integration tests
-└── notebooks/             # Demo notebooks
-```
-
-## Development
-
-### Running Tests
-
-```bash
-# Install dev dependencies
-pip install -e ".[dev]"
-
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=llmath
-
-# Run specific test file
-pytest tests/unit/test_sympy_tools.py
-```
-
-### Code Style
-
-The project uses:
-- ruff for linting/formatting
-- mypy for type checking
-
-## Configuration
-
-Edit `configs/default.yaml` to customize:
-
-```yaml
-embedding:
-  model_name: "sentence-transformers/all-MiniLM-L6-v2"
-
-model:
-  model_name: "deepseek-ai/deepseek-math-7b-rl"
-  load_in_4bit: true
-  lora_r: 16
-  lora_alpha: 32
-
-generation:
-  max_new_tokens: 512
-  temperature: 0.4
-
-agent:
-  default_k: 5
+│   ├── agent/        # Manual + ReAct agents
+│   ├── retrieval/    # FAISS retrieval + theorem KB
+│   ├── tools/        # SymPy tools + registry
+│   ├── prompts/      # Prompt templates + builders
+│   ├── training/     # SFT + ReAct data + trainer
+│   ├── evaluation/   # Baselines + TheoremQA tools
+│   └── api/          # Gradio demo
+├── scripts/          # CLI entry points
+├── benchmarks/       # Results + charts
+├── docs/             # Protocol + benchmark docs
+└── README.md
 ```
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License - see `LICENSE` for details.
 
 ## Authors
 
@@ -226,6 +149,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-- [NaturalProofs](https://github.com/wellecks/naturalproofs) dataset by Sean Welleck et al.
+- [NaturalProofs](https://github.com/wellecks/naturalproofs) dataset
 - [DeepSeek-Math](https://github.com/deepseek-ai/DeepSeek-Math) model
 - Miami University CSE 434: Introduction to Machine Learning
