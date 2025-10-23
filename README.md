@@ -46,6 +46,28 @@ python scripts/build_index.py --rebuild
 python scripts/run_demo.py
 ```
 
+## Python API
+
+```python
+from llmath.retrieval import NaturalProofsRetriever
+from llmath.agent import create_agent
+
+retriever = NaturalProofsRetriever()
+
+# Manual mode (user-provided tools)
+manual_agent = create_agent(retriever, mode="manual")
+manual_result = manual_agent.run(
+    question="Prove that the derivative of x**2*sin(x) is 2*x*sin(x) + x**2*cos(x).",
+    sympy_expressions=["diff: x**2*sin(x)"],
+)
+
+# Autonomous ReAct mode
+react_agent = create_agent(retriever, mode="autonomous")
+react_result = react_agent.run(
+    "Show that if f is differentiable then f is continuous."
+)
+```
+
 ## Features
 
 - **Autonomous Mode**: ReAct loop decides retrieval/tool calls per step
