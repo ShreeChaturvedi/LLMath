@@ -71,6 +71,14 @@ graph TD
 
 More details: `ARCHITECTURE.md`
 
+## Docs
+
+- `ARCHITECTURE.md`
+- `docs/react-protocol.md`
+- `docs/benchmarks.md`
+- `MODEL_CARD.md`
+- `CONTRIBUTING.md`
+
 ## Benchmarking
 
 Run the benchmark:
