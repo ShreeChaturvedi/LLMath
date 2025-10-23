@@ -2,7 +2,7 @@
 """Train LoRA adapters on NaturalProofs dataset.
 
 Usage:
-    python scripts/train_lora.py [--config configs/default.yaml]
+    python scripts/train_lora.py [--config configs/default.yaml] [--mode sft|react]
 
 Requires GPU with bitsandbytes support for best results.
 """
