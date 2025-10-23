@@ -68,7 +68,9 @@ def main():
         help="Optional local path to TheoremQA JSON/JSONL",
     )
     parser.add_argument(
+        "--dataset",
         "--dataset-name",
+        dest="dataset_name",
         type=str,
         default="theoremqa",
         help="HuggingFace dataset name if no local path is provided",
