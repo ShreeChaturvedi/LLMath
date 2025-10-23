@@ -5,6 +5,7 @@ Autonomous ReAct-style theorem-aware math assistant with retrieval and SymPy too
 ![CI](https://github.com/ShreeChaturvedi/LLMath/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)
 
 > This repository was created in January 2026. The codebase represents work
 > completed during the Fall 2025 semester (August-October 2025) for CSE 434 at
