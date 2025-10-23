@@ -100,6 +100,7 @@ More details: `ARCHITECTURE.md`
 - `docs/benchmarks.md`
 - `MODEL_CARD.md`
 - `CONTRIBUTING.md`
+- `docs/release.md`
 
 ## Benchmarking
 
