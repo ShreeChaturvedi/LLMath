@@ -386,8 +386,28 @@ def create_demo(config: Optional[LLMathConfig] = None) -> gr.Blocks:
                         ],
                         [
                             "Manual",
+                            "Compute the derivative of sin(x)*cos(x) and simplify your answer.",
+                            "diff: sin(x)*cos(x)",
+                        ],
+                        [
+                            "Manual",
                             "Solve the equation x**2 - 1 = 0 and justify your steps.",
                             "solve: x**2 - 1 = 0",
+                        ],
+                        [
+                            "Manual",
+                            "Find the indefinite integral of 2*x and explain your reasoning.",
+                            "integrate: 2*x",
+                        ],
+                        [
+                            "Manual",
+                            "Simplify (x**2 - 1) / (x - 1) and describe the step.",
+                            "simplify: (x**2 - 1) / (x - 1)",
+                        ],
+                        [
+                            "Manual",
+                            "Differentiate x**3 + 3*x with respect to x.",
+                            "diff: x**3 + 3*x",
                         ],
                         [
                             "Autonomous",
@@ -396,7 +416,27 @@ def create_demo(config: Optional[LLMathConfig] = None) -> gr.Blocks:
                         ],
                         [
                             "Autonomous",
-                            "Compute the derivative of sin(x)*cos(x) and simplify.",
+                            "Prove that the derivative of x**2 is 2*x.",
+                            "",
+                        ],
+                        [
+                            "Autonomous",
+                            "Explain why the product rule applies to f(x)g(x).",
+                            "",
+                        ],
+                        [
+                            "Autonomous",
+                            "Evaluate the derivative of sin(x)*cos(x) using known rules.",
+                            "",
+                        ],
+                        [
+                            "Autonomous",
+                            "Show that if f is differentiable then f is continuous.",
+                            "",
+                        ],
+                        [
+                            "Autonomous",
+                            "Provide a proof sketch for the chain rule.",
                             "",
                         ],
                     ],
