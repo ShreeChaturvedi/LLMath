@@ -5,12 +5,13 @@ Provides an interactive demo for the theorem-aware math assistant.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import logging
 import re
-from typing import Optional
+from dataclasses import dataclass
 
 import gradio as gr
 
+from ..agent.math_agent import MathAgent
 from ..agent.react_agent import ReActAgent
 from ..config import LLMathConfig
 from ..inference.deepseek import DeepSeekMathModel
@@ -18,7 +19,8 @@ from ..prompts.orchestrator import create_orchestrator
 from ..prompts.react_templates import build_react_system_prompt
 from ..retrieval import NaturalProofsRetriever
 from ..tools.registry import create_react_registry
-from ..agent.math_agent import MathAgent
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -29,8 +31,8 @@ class AppResources:
     react_agent: ReActAgent
 
 
-_resources: Optional[AppResources] = None
-_config: Optional[LLMathConfig] = None
+_resources: AppResources | None = None
+_config: LLMathConfig | None = None
 
 _THEOREM_LINE_RE = re.compile(
     r"\[T(?P<num>\d+)\]\s+\(idx=(?P<idx>\d+)\)\s+"
@@ -94,26 +96,16 @@ def _parse_retrieval_output(observation: str) -> list[dict]:
 
 def _format_theorem_table(theorems: list[dict]) -> str:
     if not theorems:
-        return "### Retrieved theorems
-
-_None._"
+        return "### Retrieved theorems\n\n_None._"
 
     rows = []
     for i, t in enumerate(theorems, start=1):
         score_str = f"{t['score']:.3f}"
         title = str(t["title"]).replace("|", " ")
-        snippet = str(t["snippet"]).replace("
-", " ")
+        snippet = str(t["snippet"]).replace("\n", " ")
         if len(snippet) > 200:
             snippet = snippet[:197] + "..."
-        rows.append(
-            "<tr>"
-            f"<td>T{i}</td>"
-            f"<td>{score_str}</td>"
-            f"<td>{title}</td>"
-            f"<td>{snippet}</td>"
-            "</tr>"
-        )
+        rows.append(f"<tr><td>T{i}</td><td>{score_str}</td><td>{title}</td><td>{snippet}</td></tr>")
 
     table_html = (
         "<table style='width:100%; table-layout:fixed; border-collapse:collapse;'>"
@@ -131,15 +123,11 @@ _None._"
         "<th style='text-align:left; border-bottom:1px solid #ccc;'>Snippet</th>"
         "</tr>"
         "</thead>"
-        "<tbody>"
-        + "".join(rows)
-        + "</tbody>"
+        "<tbody>" + "".join(rows) + "</tbody>"
         "</table>"
     )
 
-    return "### Retrieved theorems
-
-" + table_html
+    return "### Retrieved theorems\n\n" + table_html
 
 
 def _build_tool_calls_from_sympy(sympy_context: list[str]) -> list[dict]:
@@ -155,11 +143,7 @@ def _build_tool_calls_from_sympy(sympy_context: list[str]) -> list[dict]:
 
 def _format_tool_log(tool_calls: list[dict]) -> tuple[str, str]:
     if not tool_calls:
-        return "### Tool execution log
-
-_None._", "### Verification
-
-_None._"
+        return "### Tool execution log\n\n_None._", "### Verification\n\n_None._"
 
     lines = []
     verified = []
@@ -176,23 +160,16 @@ _None._"
         if status == "verified" and not tool.startswith("retrieve"):
             verified.append(tool)
 
-    verification = "### Verification
-
-" + (
+    verification = "### Verification\n\n" + (
         "Verified by SymPy: " + ", ".join(verified) if verified else "None."
     )
 
-    return "### Tool execution log
-
-" + "
-".join(lines), verification
+    return "### Tool execution log\n\n" + "\n".join(lines), verification
 
 
 def _format_trace(steps) -> str:
     if not steps:
-        return "### Reasoning trace
-
-_None._"
+        return "### Reasoning trace\n\n_None._"
 
     lines = []
     for step in steps:
@@ -205,28 +182,15 @@ _None._"
         if step.answer:
             lines.append(f"<answer>{step.answer}</answer>")
 
-    trace_block = "
-".join(lines)
-    return "### Reasoning trace
-
-```
-" + trace_block + "
-```"
+    trace_block = "\n".join(lines)
+    return "### Reasoning trace\n\n```\n" + trace_block + "\n```"
 
 
 def _format_exports(answer: str, trace: str) -> tuple[str, str]:
-    export_md = "## Answer
-
-" + answer.strip()
+    export_md = "## Answer\n\n" + answer.strip()
     if trace and "```" in trace:
-        export_md += "
-
-## Trace
-
-" + trace
-    export_latex = "$$
-" + answer.strip() + "
-$$"
+        export_md += "\n\n## Trace\n\n" + trace
+    export_latex = "$$\n" + answer.strip() + "\n$$"
     return export_md, export_latex
 
 
@@ -241,21 +205,11 @@ def math_agent_ui(
     if not question:
         empty = "Please enter a question."
         return (
-            "### Answer
-
-" + empty,
-            "### Retrieved theorems
-
-_None._",
-            "### Tool execution log
-
-_None._",
-            "### Reasoning trace
-
-_None._",
-            "### Verification
-
-_None._",
+            "### Answer\n\n" + empty,
+            "### Retrieved theorems\n\n_None._",
+            "### Tool execution log\n\n_None._",
+            "### Reasoning trace\n\n_None._",
+            "### Verification\n\n_None._",
             "",
             "",
         )
@@ -263,11 +217,11 @@ _None._",
     resources = _get_resources()
 
     if mode == "Autonomous":
-        result = resources.react_agent.run(question)
-        answer = result.answer or ""
+        react_result = resources.react_agent.run(question)
+        answer = react_result.answer or ""
         tool_calls = []
         retrieved = []
-        for step in result.steps:
+        for step in react_result.steps:
             if step.tool:
                 tool_calls.append({"tool": step.tool, "observation": step.observation or ""})
             if step.tool and step.observation and step.tool.startswith("retrieve"):
@@ -275,16 +229,16 @@ _None._",
 
         theorems_md = _format_theorem_table(retrieved)
         tool_log_md, verification_md = _format_tool_log(tool_calls)
-        trace_md = _format_trace(result.steps)
+        trace_md = _format_trace(react_result.steps)
     else:
         sympy_expressions = [hint] if hint else []
-        result = resources.manual_agent.run(
+        manual_result = resources.manual_agent.run(
             question=question,
             sympy_expressions=sympy_expressions,
             k=5,
             max_new_tokens=256,
         )
-        answer = result.answer
+        answer = manual_result.answer
         theorems = [
             {
                 "idx": t.idx,
@@ -292,18 +246,14 @@ _None._",
                 "title": t.title,
                 "snippet": t.snippet,
             }
-            for t in result.theorems
+            for t in manual_result.theorems
         ]
         theorems_md = _format_theorem_table(theorems)
-        tool_calls = _build_tool_calls_from_sympy(result.sympy_context)
+        tool_calls = _build_tool_calls_from_sympy(manual_result.sympy_context)
         tool_log_md, verification_md = _format_tool_log(tool_calls)
-        trace_md = "### Reasoning trace
+        trace_md = "### Reasoning trace\n\n_Manual mode does not emit a trace._"
 
-_Manual mode does not emit a trace._"
-
-    answer_md = "### Answer
-
-" + answer
+    answer_md = "### Answer\n\n" + answer
     export_md, export_latex = _format_exports(answer, trace_md)
 
     return (
@@ -317,7 +267,7 @@ _Manual mode does not emit a trace._"
     )
 
 
-def create_demo(config: Optional[LLMathConfig] = None) -> gr.Blocks:
+def create_demo(config: LLMathConfig | None = None) -> gr.Blocks:
     global _config
     if config is not None:
         _config = config
@@ -368,7 +318,10 @@ def create_demo(config: Optional[LLMathConfig] = None) -> gr.Blocks:
                 question_input = gr.Textbox(
                     lines=4,
                     label="Math question",
-                    placeholder="Example: Prove that the derivative of x**2*sin(x) is 2*x*sin(x) + x**2*cos(x).",
+                    placeholder=(
+                        "Example: Prove that the derivative of x**2*sin(x) is "
+                        "2*x*sin(x) + x**2*cos(x)."
+                    ),
                 )
                 sympy_hint_input = gr.Textbox(
                     lines=2,
@@ -483,7 +436,7 @@ def create_demo(config: Optional[LLMathConfig] = None) -> gr.Blocks:
 
 
 def launch_demo(
-    config: Optional[LLMathConfig] = None,
+    config: LLMathConfig | None = None,
     share: bool = False,
     port: int = 7860,
 ) -> None:
