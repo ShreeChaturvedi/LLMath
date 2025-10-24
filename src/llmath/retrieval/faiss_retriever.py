@@ -7,15 +7,15 @@ using sentence embeddings and FAISS for efficient similarity search.
 import json
 import logging
 import os
-from typing import Iterator
+from collections.abc import Iterator
+from typing import Any
 
 import faiss
-import numpy as np
 from datasets import load_dataset
 from sentence_transformers import SentenceTransformer
 
+from ..config import EmbeddingConfig, RetrieverConfig
 from .base import BaseRetriever, SearchResult
-from ..config import RetrieverConfig, EmbeddingConfig
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +52,7 @@ class NaturalProofsRetriever(BaseRetriever):
         self.embedding_config = embedding_config or EmbeddingConfig()
 
         # Load dataset
-        logger.info(
-            f"Loading dataset {self.config.dataset_name} ({self.config.dataset_split})"
-        )
+        logger.info(f"Loading dataset {self.config.dataset_name} ({self.config.dataset_split})")
         self.ds = load_dataset(
             self.config.dataset_name,
             split=self.config.dataset_split,
@@ -87,16 +85,12 @@ class NaturalProofsRetriever(BaseRetriever):
             if c in cols:
                 return c
         raise ValueError(
-            f"Could not find text field in {cols}. "
-            f"Tried: {self.config.text_field_candidates}"
+            f"Could not find text field in {cols}. Tried: {self.config.text_field_candidates}"
         )
 
     def _index_exists(self) -> bool:
         """Check if index and metadata files exist."""
-        return (
-            os.path.exists(self.config.index_path)
-            and os.path.exists(self.config.meta_path)
-        )
+        return os.path.exists(self.config.index_path) and os.path.exists(self.config.meta_path)
 
     def _iter_texts(self) -> Iterator[str]:
         """Yield normalized text for each row."""
@@ -149,7 +143,7 @@ class NaturalProofsRetriever(BaseRetriever):
 
     def _load_index(self) -> None:
         """Load FAISS index and metadata from disk."""
-        with open(self.config.meta_path, "r") as f:
+        with open(self.config.meta_path) as f:
             meta = json.load(f)
 
         if (
@@ -202,7 +196,7 @@ class NaturalProofsRetriever(BaseRetriever):
 
         return results
 
-    def get_row(self, idx: int) -> dict:
+    def get_row(self, idx: int) -> dict[str, Any]:
         """Access the raw dataset row by index.
 
         Args:
@@ -211,4 +205,5 @@ class NaturalProofsRetriever(BaseRetriever):
         Returns:
             Dictionary containing all fields of the row.
         """
-        return self.ds[int(idx)]
+        row = self.ds[int(idx)]
+        return dict(row)

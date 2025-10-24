@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -19,7 +19,7 @@ class SearchResult:
     idx: int
     score: float
     text: str
-    metadata: Optional[dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
 
 
 class BaseRetriever(ABC):
@@ -55,9 +55,7 @@ class BaseRetriever(ABC):
         """
         pass
 
-    def batch_search(
-        self, queries: list[str], k: int = 5
-    ) -> list[list[SearchResult]]:
+    def batch_search(self, queries: list[str], k: int = 5) -> list[list[SearchResult]]:
         """Search for multiple queries.
 
         Default implementation calls search() for each query.

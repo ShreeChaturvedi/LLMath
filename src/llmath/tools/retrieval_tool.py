@@ -2,8 +2,8 @@
 
 import logging
 
-from .base import BaseTool, ToolResult
 from ..retrieval.theorem_kb import TheoremKB
+from .base import BaseTool, ToolResult
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +27,7 @@ class RetrieveTool(BaseTool):
 
             lines = []
             for i, t in enumerate(theorems, 1):
-                lines.append(
-                    f"[T{i}] (idx={t.idx}) (score={t.score:.3f}) {t.title}: {t.snippet}"
-                )
+                lines.append(f"[T{i}] (idx={t.idx}) (score={t.score:.3f}) {t.title}: {t.snippet}")
             return ToolResult(success=True, output="\n".join(lines))
         except Exception as e:
             logger.exception("Retrieve tool failed.")

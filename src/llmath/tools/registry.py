@@ -1,7 +1,6 @@
 """Tool registry for dynamic dispatch of tool calls."""
 
 import logging
-from typing import Optional
 
 from .base import BaseTool, ToolResult
 
@@ -32,7 +31,7 @@ class ToolRegistry:
         self._tools[tool.name] = tool
         logger.debug("Registered tool: %s", tool.name)
 
-    def get(self, name: str) -> Optional[BaseTool]:
+    def get(self, name: str) -> BaseTool | None:
         """Get a tool by name.
 
         Args:
@@ -112,10 +111,10 @@ def create_default_registry() -> ToolRegistry:
         ToolRegistry with simplify, solve, diff, and integrate tools.
     """
     from .sympy_tools import (
-        SimplifyTool,
-        SolveTool,
         DifferentiateTool,
         IntegrateTool,
+        SimplifyTool,
+        SolveTool,
     )
 
     registry = ToolRegistry()
@@ -137,10 +136,10 @@ def create_react_registry(
     from ..retrieval.theorem_kb import TheoremKB
     from .retrieval_tool import RetrieveTool
     from .sympy_tools import (
-        SimplifyTool,
-        SolveTool,
         DifferentiateTool,
         IntegrateTool,
+        SimplifyTool,
+        SolveTool,
     )
 
     agent_config = agent_config or AgentConfig()

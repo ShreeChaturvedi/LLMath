@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -16,8 +16,8 @@ class ToolResult:
     """
 
     success: bool
-    output: Optional[str] = None
-    error: Optional[str] = None
+    output: str | None = None
+    error: str | None = None
 
     def __str__(self) -> str:
         if self.success:

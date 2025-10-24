@@ -9,7 +9,7 @@ Provides tools for:
 
 import logging
 
-from sympy import symbols, Eq, sympify, simplify, diff, integrate, solve
+from sympy import Eq, diff, integrate, simplify, solve, symbols, sympify
 from sympy.core.expr import Expr
 
 from .base import BaseTool, ToolResult

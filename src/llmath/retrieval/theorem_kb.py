@@ -4,12 +4,11 @@ Provides a higher-level interface over the retriever for working with
 theorem snippets, including title extraction and text formatting.
 """
 
-from dataclasses import dataclass
 import logging
-from typing import Optional
+from dataclasses import dataclass
 
-from .faiss_retriever import NaturalProofsRetriever
 from ..config import AgentConfig
+from .faiss_retriever import NaturalProofsRetriever
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,7 @@ class TheoremKB:
         else:
             logger.info("Using title field: `%s`", self.title_field)
 
-    def _pick_title_field(self) -> Optional[str]:
+    def _pick_title_field(self) -> str | None:
         """Select a title field from available columns."""
         cols = list(self.ds.column_names)
         candidates = ("title", "theorem", "name", "source", "section", "chapter")
