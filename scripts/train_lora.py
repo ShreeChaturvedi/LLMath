@@ -52,13 +52,13 @@ def main():
     )
     args = parser.parse_args()
 
-    from llmath.config import load_config
-    from llmath.retrieval import NaturalProofsRetriever
     from llmath.inference.model_loader import (
         load_tokenizer,
         load_base_model,
         create_lora_model,
     )
+    from llmath.config import load_config
+    from llmath.retrieval import NaturalProofsRetriever
     from llmath.training import (
         create_sft_dataset,
         create_react_dataset,

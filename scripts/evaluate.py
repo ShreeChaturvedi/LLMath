@@ -74,13 +74,12 @@ def main():
     )
     args = parser.parse_args()
 
-    from llmath.config import load_config
-    from llmath.retrieval import NaturalProofsRetriever
-    from llmath.retrieval.theorem_kb import TheoremKB
-    from llmath.prompts.orchestrator import create_orchestrator
-    from llmath.inference.deepseek import DeepSeekMathModel
     from llmath.agent import MathAgent
+    from llmath.config import load_config
     from llmath.evaluation import compare_baseline_and_agent, print_summary
+    from llmath.inference.deepseek import DeepSeekMathModel
+    from llmath.prompts.orchestrator import create_orchestrator
+    from llmath.retrieval import NaturalProofsRetriever
 
     # Load config
     config = load_config(args.config)
