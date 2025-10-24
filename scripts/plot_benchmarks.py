@@ -52,9 +52,7 @@ def main():
     modes = results.get("modes", {})
 
     accuracy = {mode: data["metrics"]["accuracy"] for mode, data in modes.items()}
-    token_eff = {
-        mode: data["metrics"]["token_efficiency"] for mode, data in modes.items()
-    }
+    token_eff = {mode: data["metrics"]["token_efficiency"] for mode, data in modes.items()}
 
     output_dir = Path(args.output_dir)
     plot_bar(accuracy, "Accuracy", output_dir / "accuracy.png")

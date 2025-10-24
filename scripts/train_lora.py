@@ -16,9 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Train LoRA adapters for DeepSeek-Math"
-    )
+    parser = argparse.ArgumentParser(description="Train LoRA adapters for DeepSeek-Math")
     parser.add_argument(
         "--config",
         type=str,
@@ -52,16 +50,16 @@ def main():
     )
     args = parser.parse_args()
 
-    from llmath.inference.model_loader import (
-        load_tokenizer,
-        load_base_model,
-        create_lora_model,
-    )
     from llmath.config import load_config
+    from llmath.inference.model_loader import (
+        create_lora_model,
+        load_base_model,
+        load_tokenizer,
+    )
     from llmath.retrieval import NaturalProofsRetriever
     from llmath.training import (
-        create_sft_dataset,
         create_react_dataset,
+        create_sft_dataset,
         create_tokenize_function,
         train_lora,
     )

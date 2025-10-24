@@ -40,9 +40,7 @@ DEFAULT_EVAL_ITEMS = [
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Evaluate baseline vs agent"
-    )
+    parser = argparse.ArgumentParser(description="Evaluate baseline vs agent")
     parser.add_argument(
         "--config",
         type=str,

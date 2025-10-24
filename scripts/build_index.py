@@ -20,9 +20,7 @@ from llmath.retrieval import NaturalProofsRetriever
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Build FAISS index for NaturalProofs"
-    )
+    parser = argparse.ArgumentParser(description="Build FAISS index for NaturalProofs")
     parser.add_argument(
         "--rebuild",
         action="store_true",

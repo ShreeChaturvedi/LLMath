@@ -270,20 +270,14 @@ def main():
 
         total_examples = len(mode_results)
         accuracy = correct_total / total_examples if total_examples else 0.0
-        tool_precision = (
-            tool_calls_useful / tool_calls_total if tool_calls_total else None
-        )
+        tool_precision = tool_calls_useful / tool_calls_total if tool_calls_total else None
         retrieval_recall = (
-            retrieval_recall_total / retrieval_recall_count
-            if retrieval_recall_count
-            else None
+            retrieval_recall_total / retrieval_recall_count if retrieval_recall_count else None
         )
         avg_iterations = None
         if total_examples and mode == "autonomous":
             avg_iterations = iterations_total / total_examples
-        token_efficiency = (
-            token_total / correct_total if correct_total else None
-        )
+        token_efficiency = token_total / correct_total if correct_total else None
 
         results[mode] = {
             "metrics": {

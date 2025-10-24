@@ -14,9 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Launch Gradio demo"
-    )
+    parser = argparse.ArgumentParser(description="Launch Gradio demo")
     parser.add_argument(
         "--config",
         type=str,
