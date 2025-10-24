@@ -2,6 +2,7 @@
 
 import re
 from dataclasses import dataclass
+from typing import cast
 
 
 @dataclass
@@ -22,7 +23,7 @@ class ReActOutputParser:
     _answer_re = re.compile(r"<answer>(.*?)</answer>", re.DOTALL)
 
     def _extract(self, pattern: re.Pattern[str], text: str) -> str | None:
-        matches = pattern.findall(text)
+        matches = cast(list[str], pattern.findall(text))
         if not matches:
             return None
         return matches[-1].strip()

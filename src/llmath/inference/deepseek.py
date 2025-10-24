@@ -5,15 +5,14 @@ using the DeepSeek-Math model with optional LoRA adapters.
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from ..config import ModelConfig, GenerationConfig
-from .model_loader import load_trained_model
+from ..config import GenerationConfig, ModelConfig
 from .generation import clean_model_output, truncate_at_stop_sequences
+from .model_loader import load_trained_model
 
 
 @dataclass
@@ -49,7 +48,7 @@ class DeepSeekMathModel:
         self,
         model: PeftModel | AutoModelForCausalLM,
         tokenizer: AutoTokenizer,
-        generation_config: Optional[GenerationConfig] = None,
+        generation_config: GenerationConfig | None = None,
     ) -> None:
         """Initialize the model wrapper.
 
@@ -66,7 +65,7 @@ class DeepSeekMathModel:
     def from_config(
         cls,
         model_config: ModelConfig,
-        generation_config: Optional[GenerationConfig] = None,
+        generation_config: GenerationConfig | None = None,
     ) -> "DeepSeekMathModel":
         """Create a DeepSeekMathModel from configuration.
 
@@ -83,9 +82,9 @@ class DeepSeekMathModel:
     def generate(
         self,
         prompt: str,
-        max_new_tokens: Optional[int] = None,
-        temperature: Optional[float] = None,
-        min_new_tokens: Optional[int] = None,
+        max_new_tokens: int | None = None,
+        temperature: float | None = None,
+        min_new_tokens: int | None = None,
     ) -> GenerationResult:
         """Generate a response for the given prompt.
 
@@ -143,7 +142,7 @@ class DeepSeekMathModel:
         context: str,
         system_prompt: str,
         max_new_tokens: int = 256,
-        stop_sequences: Optional[list[str]] = None,
+        stop_sequences: list[str] | None = None,
     ) -> GenerationResult:
         """Generate a single ReAct step.
 

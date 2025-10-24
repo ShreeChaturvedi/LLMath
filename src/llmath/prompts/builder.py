@@ -9,8 +9,8 @@ Constructs prompts that combine:
 
 from textwrap import indent
 
-from .templates import SYSTEM_HEADER, ANSWER_INSTRUCTIONS, BASELINE_PROMPT_TEMPLATE
 from ..retrieval.theorem_kb import TheoremSnippet
+from .templates import ANSWER_INSTRUCTIONS, BASELINE_PROMPT_TEMPLATE, SYSTEM_HEADER
 
 
 def build_math_prompt(
@@ -45,9 +45,7 @@ def build_math_prompt(
             block += indent(snippet, "    ")
             theorem_blocks.append(block)
         theorems_block = (
-            "Retrieved theorems / definitions:\n"
-            + "\n\n".join(theorem_blocks)
-            + "\n\n"
+            "Retrieved theorems / definitions:\n" + "\n\n".join(theorem_blocks) + "\n\n"
         )
     else:
         theorems_block = "Retrieved theorems / definitions:\nNone.\n\n"

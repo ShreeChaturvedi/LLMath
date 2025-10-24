@@ -8,8 +8,8 @@ import logging
 from dataclasses import dataclass
 
 from ..config import AgentConfig, GenerationConfig, ModelConfig
-from ..prompts.orchestrator import ToolOrchestrator, OrchestratorResult
 from ..inference.deepseek import DeepSeekMathModel
+from ..prompts.orchestrator import OrchestratorResult, ToolOrchestrator
 
 logger = logging.getLogger(__name__)
 

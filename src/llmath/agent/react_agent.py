@@ -1,8 +1,7 @@
 """ReAct-style autonomous agent for LLMath."""
 
-from dataclasses import dataclass
 import logging
-from typing import Optional
+from dataclasses import dataclass
 
 from ..config import AgentConfig, GenerationConfig, ModelConfig, ReActConfig
 from ..inference.deepseek import DeepSeekMathModel
@@ -34,16 +33,14 @@ class ReActAgent:
         self,
         model: DeepSeekMathModel,
         tool_registry: ToolRegistry,
-        config: Optional[ReActConfig] = None,
-        system_prompt: Optional[str] = None,
+        config: ReActConfig | None = None,
+        system_prompt: str | None = None,
     ) -> None:
         self.model = model
         self.tools = tool_registry
         self.config = config or ReActConfig()
         self.parser = ReActOutputParser()
-        self.system_prompt = system_prompt or build_react_system_prompt(
-            self.tools.list_tools()
-        )
+        self.system_prompt = system_prompt or build_react_system_prompt(self.tools.list_tools())
 
     def run(self, question: str) -> ReActResult:
         """Run the ReAct loop for a single question."""
@@ -117,10 +114,10 @@ class ReActAgent:
 
 def create_react_agent(
     retriever,
-    model_config: Optional[ModelConfig] = None,
-    generation_config: Optional[GenerationConfig] = None,
-    agent_config: Optional[AgentConfig] = None,
-    react_config: Optional[ReActConfig] = None,
+    model_config: ModelConfig | None = None,
+    generation_config: GenerationConfig | None = None,
+    agent_config: AgentConfig | None = None,
+    react_config: ReActConfig | None = None,
 ) -> ReActAgent:
     """Factory for a configured ReAct agent."""
     model_config = model_config or ModelConfig()

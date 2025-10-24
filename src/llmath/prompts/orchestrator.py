@@ -4,12 +4,11 @@ Coordinates retrieval and symbolic tools to build complete prompts.
 """
 
 import logging
-
 from dataclasses import dataclass
 
-from .builder import build_math_prompt
 from ..retrieval.theorem_kb import TheoremKB, TheoremSnippet
 from ..tools.registry import ToolRegistry
+from .builder import build_math_prompt
 
 logger = logging.getLogger(__name__)
 

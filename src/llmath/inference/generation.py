@@ -3,8 +3,6 @@
 Provides functions for cleaning and post-processing model outputs.
 """
 
-from typing import Optional
-
 
 def clean_model_output(text: str) -> str:
     """Clean raw model output by removing echoed instructions.
@@ -35,7 +33,7 @@ def clean_model_output(text: str) -> str:
     # Collapse consecutive duplicate lines and extra blank lines.
     lines = [ln.rstrip() for ln in text.splitlines()]
     cleaned: list[str] = []
-    last_nonempty: Optional[str] = None
+    last_nonempty: str | None = None
 
     for ln in lines:
         if not ln.strip():

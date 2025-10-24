@@ -5,7 +5,6 @@ Uses Pydantic for validation and YAML for external config files.
 """
 
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from pydantic import BaseModel, Field
@@ -44,12 +43,9 @@ class ModelConfig(BaseModel):
     lora_alpha: int = 32
     lora_dropout: float = 0.05
     lora_target_modules: list[str] = Field(
-        default=[
-            "q_proj", "v_proj", "k_proj", "o_proj",
-            "gate_proj", "up_proj", "down_proj"
-        ]
+        default=["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
     )
-    adapter_path: Optional[Path] = None
+    adapter_path: Path | None = None
 
 
 class GenerationConfig(BaseModel):
@@ -109,7 +105,7 @@ class LLMathConfig(BaseModel):
     training: TrainingConfig = Field(default_factory=TrainingConfig)
 
 
-def load_config(path: Optional[Path | str] = None) -> LLMathConfig:
+def load_config(path: Path | str | None = None) -> LLMathConfig:
     """
     Load configuration from a YAML file.
 
@@ -144,4 +140,5 @@ def save_config(config: LLMathConfig, path: Path | str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(path, "w") as f:
-        yaml.dump(config.model_dump(), f, default_flow_style=False, sort_keys=False)
+        data = config.model_dump()  # type: ignore[attr-defined]
+        yaml.dump(data, f, default_flow_style=False, sort_keys=False)

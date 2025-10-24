@@ -5,11 +5,10 @@ quantization and LoRA adapters.
 """
 
 import logging
-from typing import Optional
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, PeftModel
+from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 from ..config import ModelConfig
 
@@ -105,7 +104,7 @@ def create_lora_model(base_model: AutoModelForCausalLM, config: ModelConfig):
 
 def load_trained_model(
     config: ModelConfig,
-    tokenizer: Optional[AutoTokenizer] = None,
+    tokenizer: AutoTokenizer | None = None,
 ) -> tuple[PeftModel | AutoModelForCausalLM, AutoTokenizer]:
     """Load model with pre-trained LoRA adapters.
 
