@@ -44,6 +44,7 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.0.0",
     "matplotlib>=3.7.0",
+    "types-PyYAML>=6.0.0",
     "pre-commit>=3.0.0",
 ]
 demo = [
@@ -93,3 +94,4 @@ ignore = ["E501"]
 python_version = "3.10"
 warn_return_any = true
 warn_unused_ignores = true
+ignore_missing_imports = true
