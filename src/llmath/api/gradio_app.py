@@ -5,7 +5,6 @@ Provides an interactive demo for the theorem-aware math assistant.
 
 from __future__ import annotations
 
-import logging
 import re
 from dataclasses import dataclass
 
@@ -19,8 +18,6 @@ from ..prompts.orchestrator import create_orchestrator
 from ..prompts.react_templates import build_react_system_prompt
 from ..retrieval import NaturalProofsRetriever
 from ..tools.registry import create_react_registry
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass
