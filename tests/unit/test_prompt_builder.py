@@ -2,8 +2,7 @@
 
 import pytest
 
-from llmath.prompts.builder import build_math_prompt, build_baseline_prompt
-from llmath.prompts.templates import SYSTEM_HEADER, ANSWER_INSTRUCTIONS
+from llmath.prompts.builder import build_baseline_prompt, build_math_prompt
 from llmath.retrieval.theorem_kb import TheoremSnippet
 
 

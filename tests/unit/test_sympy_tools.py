@@ -1,7 +1,5 @@
 """Tests for SymPy tools."""
 
-import pytest
-
 from llmath.tools.sympy_tools import (
     SimplifyTool,
     SolveTool,
