@@ -6,7 +6,6 @@ analyzing the results.
 
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Optional
 
 from ..agent.math_agent import MathAgent
 from ..inference.deepseek import DeepSeekMathModel
@@ -34,7 +33,7 @@ class ComparisonResult:
     agent_answer: str
     theorem_titles: list[str] = field(default_factory=list)
     sympy_context: list[str] = field(default_factory=list)
-    label: Optional[str] = None
+    label: str | None = None
     notes: str = ""
 
     def __str__(self) -> str:
@@ -120,14 +119,16 @@ def compare_baseline_and_agent(
             print(agent_result.answer)
             print()
 
-        results.append(ComparisonResult(
-            question=question,
-            sympy_expressions=sympy_expressions,
-            baseline_answer=baseline_answer,
-            agent_answer=agent_result.answer,
-            theorem_titles=[t.title for t in agent_result.theorems],
-            sympy_context=list(agent_result.sympy_context),
-        ))
+        results.append(
+            ComparisonResult(
+                question=question,
+                sympy_expressions=sympy_expressions,
+                baseline_answer=baseline_answer,
+                agent_answer=agent_result.answer,
+                theorem_titles=[t.title for t in agent_result.theorems],
+                sympy_context=list(agent_result.sympy_context),
+            )
+        )
 
     return results
 

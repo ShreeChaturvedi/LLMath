@@ -7,7 +7,9 @@ from datasets import Dataset
 from ..prompts.react_templates import build_react_system_prompt
 
 
-def _pick_field(cols: list[str], candidates: tuple[str, ...], default: str | None = None) -> str | None:
+def _pick_field(
+    cols: list[str], candidates: tuple[str, ...], default: str | None = None
+) -> str | None:
     for c in candidates:
         if c in cols:
             return c
@@ -88,16 +90,14 @@ def build_react_examples(
             {
                 "role": "assistant",
                 "content": (
-                    "<think>Retrieve a relevant theorem.</think>"
-                    f"<tool>retrieve: {query}</tool>"
+                    f"<think>Retrieve a relevant theorem.</think><tool>retrieve: {query}</tool>"
                 ),
             },
             {"role": "user", "content": f"<observe>{observation}</observe>"},
             {
                 "role": "assistant",
                 "content": (
-                    "<think>Use the retrieved theorem to answer.</think>"
-                    f"<answer>{answer}</answer>"
+                    f"<think>Use the retrieved theorem to answer.</think><answer>{answer}</answer>"
                 ),
             },
         ]

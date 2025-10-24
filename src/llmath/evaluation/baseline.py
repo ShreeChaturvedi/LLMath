@@ -4,10 +4,7 @@ Provides a simple baseline that answers questions using only
 the model's parametric knowledge, without RAG or SymPy tools.
 """
 
-from typing import Optional
-
 from ..inference.deepseek import DeepSeekMathModel
-
 
 BASELINE_PROMPT_TEMPLATE = """You are a careful mathematical assistant.
 Answer the following question rigorously and step by step, but DO NOT reference any external tools.

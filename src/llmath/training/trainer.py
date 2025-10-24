@@ -6,11 +6,10 @@ on DeepSeek-Math models.
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 from datasets import Dataset
-from transformers import TrainingArguments, Trainer, PreTrainedTokenizer
 from peft import PeftModel
+from transformers import PreTrainedTokenizer, Trainer, TrainingArguments
 
 from ..config import TrainingConfig
 
@@ -78,7 +77,7 @@ def create_trainer(
     train_dataset: Dataset,
     config: TrainingConfig,
     output_dir: str | Path,
-    eval_dataset: Optional[Dataset] = None,
+    eval_dataset: Dataset | None = None,
 ) -> Trainer:
     """Create a configured Trainer for LoRA fine-tuning.
 
@@ -111,7 +110,7 @@ def train_lora(
     train_dataset: Dataset,
     config: TrainingConfig,
     output_dir: str | Path,
-    eval_dataset: Optional[Dataset] = None,
+    eval_dataset: Dataset | None = None,
 ) -> Path:
     """Run LoRA fine-tuning and save the adapters.
 

@@ -1,10 +1,11 @@
 """Utilities for loading and evaluating TheoremQA."""
 
-from dataclasses import dataclass, field
 import json
-from pathlib import Path
 import re
-from typing import Any, Iterable
+from collections.abc import Iterable
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, cast
 
 from datasets import load_dataset
 
@@ -36,7 +37,7 @@ def _normalize_answer(text: str) -> str:
 
 def extract_final_answer(text: str) -> str:
     """Extract a final answer string from model output."""
-    match = re.findall(r"<answer>(.*?)</answer>", text, re.DOTALL)
+    match = cast(list[str], re.findall(r"<answer>(.*?)</answer>", text, re.DOTALL))
     if match:
         return match[-1].strip()
 

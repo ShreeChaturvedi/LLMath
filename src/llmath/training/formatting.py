@@ -4,13 +4,14 @@ Provides functions for formatting datasets according to the
 DeepSeek chat template and tokenization.
 """
 
-from typing import Callable
+from collections.abc import Callable
+from typing import Any, cast
 
 from transformers import PreTrainedTokenizer
 
 
 def format_for_deepseek(
-    examples: dict[str, list[str]],
+    examples: dict[str, list[Any]],
     tokenizer: PreTrainedTokenizer,
 ) -> list[str]:
     """Format examples using DeepSeek's chat template.
@@ -27,7 +28,8 @@ def format_for_deepseek(
     """
     if "messages" in examples:
         texts = []
-        for messages in examples["messages"]:
+        messages_list = cast(list[list[dict[str, str]]], examples["messages"])
+        for messages in messages_list:
             text = tokenizer.apply_chat_template(
                 messages,
                 add_generation_prompt=False,
@@ -52,7 +54,7 @@ def format_for_deepseek(
 
 
 def tokenize_batch(
-    examples: dict[str, list[str]],
+    examples: dict[str, list[Any]],
     tokenizer: PreTrainedTokenizer,
     max_length: int = 1024,
 ) -> dict[str, list[list[int]]]:
@@ -76,15 +78,16 @@ def tokenize_batch(
         truncation=True,
         max_length=max_length,
     )
+    enc_dict = cast(dict[str, list[list[int]]], enc)
     # For causal LM, labels are the same as input_ids
-    enc["labels"] = enc["input_ids"].copy()
-    return enc
+    enc_dict["labels"] = enc_dict["input_ids"].copy()
+    return enc_dict
 
 
 def create_tokenize_function(
     tokenizer: PreTrainedTokenizer,
     max_length: int = 1024,
-) -> Callable:
+) -> Callable[[dict[str, list[Any]]], dict[str, list[list[int]]]]:
     """Create a tokenization function for dataset.map().
 
     Returns a function that can be passed to Dataset.map() for
@@ -97,6 +100,8 @@ def create_tokenize_function(
     Returns:
         Function suitable for Dataset.map(batched=True).
     """
+
     def tokenize_fn(examples):
         return tokenize_batch(examples, tokenizer, max_length)
+
     return tokenize_fn

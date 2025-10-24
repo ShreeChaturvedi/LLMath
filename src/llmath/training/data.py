@@ -5,12 +5,13 @@ the NaturalProofs dataset for fine-tuning.
 """
 
 import random
-from typing import Optional
 
 from datasets import Dataset
 
 
-def _pick_field(cols: list[str], candidates: tuple[str, ...], default: str | None = None) -> str | None:
+def _pick_field(
+    cols: list[str], candidates: tuple[str, ...], default: str | None = None
+) -> str | None:
     """Find the first matching field from candidates in columns."""
     for c in candidates:
         if c in cols:
@@ -107,10 +108,12 @@ def build_sft_examples(
             f"Conclusion:\nTherefore, the statement above holds as required."
         )
 
-        examples.append({
-            "prompt": prompt,
-            "response": response,
-        })
+        examples.append(
+            {
+                "prompt": prompt,
+                "response": response,
+            }
+        )
 
     return examples
 
