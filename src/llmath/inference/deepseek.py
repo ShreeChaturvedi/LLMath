@@ -184,7 +184,11 @@ class DeepSeekMathModel:
 
         generated_ids = outputs[0, input_length:]
         raw_text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
-        truncated_text = truncate_at_stop_sequences(raw_text, stop_sequences)
+        truncated_text = truncate_at_stop_sequences(
+            raw_text,
+            stop_sequences,
+            include_stop_sequence=True,
+        )
 
         return GenerationResult(
             text=truncated_text,

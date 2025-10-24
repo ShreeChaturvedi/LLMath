@@ -53,7 +53,11 @@ def clean_model_output(text: str) -> str:
     return "\n".join(cleaned).strip()
 
 
-def truncate_at_stop_sequences(text: str, stop_sequences: list[str] | None = None) -> str:
+def truncate_at_stop_sequences(
+    text: str,
+    stop_sequences: list[str] | None = None,
+    include_stop_sequence: bool = False,
+) -> str:
     """Truncate text at the first occurrence of any stop sequence.
 
     Args:
@@ -72,9 +76,16 @@ def truncate_at_stop_sequences(text: str, stop_sequences: list[str] | None = Non
         ]
 
     min_idx = len(text)
+    matched_seq = None
     for seq in stop_sequences:
         idx = text.find(seq)
         if idx != -1 and idx < min_idx:
             min_idx = idx
+            matched_seq = seq
 
+    if matched_seq is None:
+        return text.strip()
+
+    if include_stop_sequence:
+        return text[: min_idx + len(matched_seq)].strip()
     return text[:min_idx].strip()
