@@ -6,13 +6,13 @@ from pathlib import Path
 import pytest
 
 from llmath.config import (
-    LLMathConfig,
-    EmbeddingConfig,
-    RetrieverConfig,
-    ModelConfig,
-    GenerationConfig,
     AgentConfig,
+    EmbeddingConfig,
+    GenerationConfig,
+    LLMathConfig,
+    ModelConfig,
     ReActConfig,
+    RetrieverConfig,
     load_config,
     save_config,
 )
@@ -90,8 +90,6 @@ class TestConfigValidation:
             GenerationConfig(temperature="not_a_number")
 
     def test_config_accepts_partial_override(self):
-        config = LLMathConfig(
-            agent=AgentConfig(default_k=10)
-        )
+        config = LLMathConfig(agent=AgentConfig(default_k=10))
         assert config.agent.default_k == 10
         assert config.embedding.batch_size == 64  # Default preserved

@@ -4,15 +4,16 @@ These tests verify that the components work together correctly.
 Most tests use mocks to avoid requiring GPU resources.
 """
 
-import pytest
-from unittest.mock import Mock, MagicMock, patch
-from dataclasses import dataclass
+from unittest.mock import Mock
 
-from llmath.config import LLMathConfig, AgentConfig
-from llmath.retrieval.theorem_kb import TheoremSnippet, TheoremKB
-from llmath.tools.registry import ToolRegistry, create_default_registry
-from llmath.prompts.orchestrator import ToolOrchestrator, OrchestratorResult
+import pytest
+
+from llmath.config import LLMathConfig
 from llmath.prompts.builder import build_math_prompt
+from llmath.prompts.orchestrator import OrchestratorResult, ToolOrchestrator
+from llmath.retrieval.base import SearchResult
+from llmath.retrieval.theorem_kb import TheoremKB, TheoremSnippet
+from llmath.tools.registry import create_default_registry
 
 
 @pytest.fixture
@@ -25,15 +26,17 @@ def mock_retriever():
 
     # Mock search results
     retriever.search.return_value = [
-        {"idx": 0, "score": 0.95, "text": "The product rule states..."},
-        {"idx": 1, "score": 0.85, "text": "The chain rule states..."},
+        SearchResult(idx=0, score=0.95, text="The product rule states..."),
+        SearchResult(idx=1, score=0.85, text="The chain rule states..."),
     ]
 
     # Mock dataset rows
-    retriever.ds.__getitem__ = Mock(side_effect=lambda i: {
-        "text": f"Full text for entry {i}",
-        "title": f"Theorem {i}",
-    })
+    retriever.ds.__getitem__ = Mock(
+        side_effect=lambda i: {
+            "text": f"Full text for entry {i}",
+            "title": f"Theorem {i}",
+        }
+    )
 
     return retriever
 
@@ -68,23 +71,23 @@ class TestToolRegistry:
 
         # Test solve command
         result = registry.execute("solve: x**2 - 1 = 0")
-        assert result.tool_name == "solve"
-        assert "[-1, 1]" in result.result
+        assert result.success
+        assert "[-1, 1]" in result.output
 
         # Test diff command
         result = registry.execute("diff: x**2")
-        assert result.tool_name == "diff"
-        assert "2*x" in result.result
+        assert result.success
+        assert "2*x" in result.output
 
         # Test integrate command
         result = registry.execute("integrate: 2*x")
-        assert result.tool_name == "integrate"
-        assert "x**2" in result.result
+        assert result.success
+        assert "x**2" in result.output
 
         # Test simplify (default)
         result = registry.execute("(x**2 - 1) / (x - 1)")
-        assert result.tool_name == "simplify"
-        assert "x + 1" in result.result
+        assert result.success
+        assert "x + 1" in result.output
 
     def test_registry_format_result(self):
         """Test result formatting for prompts."""
@@ -181,7 +184,7 @@ class TestEndToEndMocked:
 
     def test_agent_pipeline_mocked(self, mock_retriever):
         """Test full pipeline with mocked model."""
-        from llmath.agent.math_agent import MathAgent, AgentResult
+        from llmath.agent.math_agent import AgentResult, MathAgent
         from llmath.prompts.orchestrator import ToolOrchestrator
         from llmath.retrieval.theorem_kb import TheoremKB
         from llmath.tools.registry import create_default_registry

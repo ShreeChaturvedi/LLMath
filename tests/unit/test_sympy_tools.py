@@ -1,16 +1,16 @@
 """Tests for SymPy tools."""
 
+from llmath.tools.registry import ToolRegistry, create_default_registry
 from llmath.tools.sympy_tools import (
-    SimplifyTool,
-    SolveTool,
     DifferentiateTool,
     IntegrateTool,
-    simplify_expr,
-    solve_equation,
+    SimplifyTool,
+    SolveTool,
     differentiate_expr,
     integrate_expr,
+    simplify_expr,
+    solve_equation,
 )
-from llmath.tools.registry import ToolRegistry, create_default_registry
 
 
 class TestSimplifyTool:
