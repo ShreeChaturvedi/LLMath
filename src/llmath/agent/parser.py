@@ -1,7 +1,7 @@
 """Parser for ReAct model outputs."""
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 
 @dataclass

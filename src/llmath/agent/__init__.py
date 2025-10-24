@@ -1,8 +1,8 @@
 """Agent module for LLMath - end-to-end math reasoning agent."""
 
-from .math_agent import MathAgent, AgentResult, create_math_agent
-from .react_agent import ReActAgent, ReActResult, create_react_agent
+from .math_agent import AgentResult, MathAgent, create_math_agent
 from .parser import ReActOutputParser
+from .react_agent import ReActAgent, ReActResult, create_react_agent
 from .state import ReActState, ReActStep
 
 

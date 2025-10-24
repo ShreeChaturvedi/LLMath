@@ -5,11 +5,9 @@ a single pipeline for answering mathematical questions.
 """
 
 import logging
-
 from dataclasses import dataclass
-from typing import Optional
 
-from ..config import AgentConfig, GenerationConfig
+from ..config import AgentConfig, GenerationConfig, ModelConfig
 from ..prompts.orchestrator import ToolOrchestrator, OrchestratorResult
 from ..inference.deepseek import DeepSeekMathModel
 
@@ -84,7 +82,7 @@ class MathAgent:
         self,
         orchestrator: ToolOrchestrator,
         model: DeepSeekMathModel,
-        config: Optional[AgentConfig] = None,
+        config: AgentConfig | None = None,
     ) -> None:
         """Initialize the math agent.
 
@@ -194,9 +192,7 @@ def create_math_agent(
     Returns:
         Configured MathAgent ready for use.
     """
-    from ..config import ModelConfig, GenerationConfig, AgentConfig
     from ..prompts.orchestrator import create_orchestrator
-    from ..inference.deepseek import DeepSeekMathModel
 
     model_config = model_config or ModelConfig()
     generation_config = generation_config or GenerationConfig()
