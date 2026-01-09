@@ -128,17 +128,23 @@ def load_config(path: Path | str | None = None) -> LLMathConfig:
     return LLMathConfig(**data)
 
 
-def save_config(config: LLMathConfig, path: Path | str) -> None:
-    """
-    Save configuration to a YAML file.
+def _convert_paths(obj):
+    """Convert Path objects to strings for YAML serialization."""
+    if isinstance(obj, dict):
+        return {k: _convert_paths(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_convert_paths(item) for item in obj]
+    if isinstance(obj, Path):
+        return str(obj)
+    return obj
 
-    Args:
-        config: LLMathConfig instance to save.
-        path: Path to save the YAML file.
-    """
+
+def save_config(config: LLMathConfig, path: Path | str) -> None:
+    """Save configuration to a YAML file."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
+    data = _convert_paths(config.model_dump())
+
     with open(path, "w") as f:
-        data = config.model_dump()  # type: ignore[attr-defined]
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)

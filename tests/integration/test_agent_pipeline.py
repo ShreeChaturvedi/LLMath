@@ -184,6 +184,7 @@ class TestEndToEndMocked:
 
     def test_agent_pipeline_mocked(self, mock_retriever):
         """Test full pipeline with mocked model."""
+        pytest.importorskip("peft", reason="peft required for MathAgent tests")
         from llmath.agent.math_agent import AgentResult, MathAgent
         from llmath.prompts.orchestrator import ToolOrchestrator
         from llmath.retrieval.theorem_kb import TheoremKB

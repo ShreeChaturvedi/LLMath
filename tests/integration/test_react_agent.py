@@ -2,10 +2,14 @@
 
 from dataclasses import dataclass
 
-from llmath.agent.react_agent import ReActAgent
-from llmath.config import ReActConfig
-from llmath.inference.deepseek import GenerationResult
-from llmath.tools.registry import create_default_registry
+import pytest
+
+pytest.importorskip("peft", reason="peft required for ReAct agent tests")
+
+from llmath.agent.react_agent import ReActAgent  # noqa: E402
+from llmath.config import ReActConfig  # noqa: E402
+from llmath.inference.deepseek import GenerationResult  # noqa: E402
+from llmath.tools.registry import create_default_registry  # noqa: E402
 
 
 @dataclass

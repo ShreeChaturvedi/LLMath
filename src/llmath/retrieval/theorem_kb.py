@@ -4,11 +4,16 @@ Provides a higher-level interface over the retriever for working with
 theorem snippets, including title extraction and text formatting.
 """
 
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from ..config import AgentConfig
-from .faiss_retriever import NaturalProofsRetriever
+
+if TYPE_CHECKING:
+    from .faiss_retriever import NaturalProofsRetriever
 
 logger = logging.getLogger(__name__)
 

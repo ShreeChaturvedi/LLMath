@@ -1,14 +1,19 @@
 """ReAct-style autonomous agent for LLMath."""
 
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from ..config import AgentConfig, GenerationConfig, ModelConfig, ReActConfig
-from ..inference.deepseek import DeepSeekMathModel
 from ..prompts.react_templates import build_react_system_prompt
 from ..tools.registry import ToolRegistry, create_react_registry
 from .parser import ReActOutputParser
 from .state import ReActState, ReActStep
+
+if TYPE_CHECKING:
+    from ..inference.deepseek import DeepSeekMathModel
 
 logger = logging.getLogger(__name__)
 

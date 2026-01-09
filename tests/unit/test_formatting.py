@@ -1,6 +1,10 @@
 """Tests for training formatting utilities."""
 
-from llmath.training.formatting import format_for_deepseek
+import pytest
+
+pytest.importorskip("datasets", reason="datasets required for formatting tests")
+
+from llmath.training.formatting import format_for_deepseek  # noqa: E402
 
 
 class DummyTokenizer:

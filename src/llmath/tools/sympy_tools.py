@@ -8,23 +8,23 @@ Provides tools for:
 """
 
 import logging
+from typing import Any
 
 from sympy import Eq, diff, integrate, simplify, solve, symbols, sympify
-from sympy.core.expr import Expr
 
 from .base import BaseTool, ToolResult
 
 logger = logging.getLogger(__name__)
 
 
-def _to_expr(expr_str: str) -> Expr:
+def _to_expr(expr_str: str) -> Any:
     """Best-effort conversion from string to SymPy expression.
 
     Args:
         expr_str: String representation of mathematical expression.
 
     Returns:
-        SymPy Expr object.
+        SymPy expression (Expr or compatible type).
     """
     return sympify(expr_str, convert_xor=True)
 
@@ -175,22 +175,22 @@ class IntegrateTool(BaseTool):
 def simplify_expr(expr_str: str) -> str:
     """Simplify an algebraic expression (legacy function API)."""
     result = SimplifyTool().execute(expr_str)
-    return result.output if result.success else f"[sympy_error] {result.error}"
+    return result.output or "" if result.success else f"[sympy_error] {result.error}"
 
 
 def solve_equation(equation_str: str, symbol: str = "x") -> str:
     """Solve an equation (legacy function API)."""
     result = SolveTool().execute(equation_str, symbol)
-    return result.output if result.success else f"[sympy_error] {result.error}"
+    return result.output or "" if result.success else f"[sympy_error] {result.error}"
 
 
 def differentiate_expr(expr_str: str, symbol: str = "x") -> str:
     """Differentiate an expression (legacy function API)."""
     result = DifferentiateTool().execute(expr_str, symbol)
-    return result.output if result.success else f"[sympy_error] {result.error}"
+    return result.output or "" if result.success else f"[sympy_error] {result.error}"
 
 
 def integrate_expr(expr_str: str, symbol: str = "x") -> str:
     """Integrate an expression (legacy function API)."""
     result = IntegrateTool().execute(expr_str, symbol)
-    return result.output if result.success else f"[sympy_error] {result.error}"
+    return result.output or "" if result.success else f"[sympy_error] {result.error}"

@@ -3,6 +3,7 @@
 import tempfile
 from pathlib import Path
 
+import pydantic
 import pytest
 
 from llmath.config import (
@@ -16,6 +17,8 @@ from llmath.config import (
     load_config,
     save_config,
 )
+
+PYDANTIC_V2 = int(pydantic.VERSION.split(".")[0]) >= 2
 
 
 class TestDefaultConfig:
@@ -69,6 +72,7 @@ class TestConfigLoading:
         with pytest.raises(FileNotFoundError):
             load_config("/nonexistent/path.yaml")
 
+    @pytest.mark.skipif(not PYDANTIC_V2, reason="save_config requires Pydantic v2")
     def test_save_and_load_roundtrip(self):
         original = LLMathConfig()
         original.agent.default_k = 10  # Modify a value

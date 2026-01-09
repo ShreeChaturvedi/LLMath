@@ -1,8 +1,9 @@
 """Tools module for LLMath - symbolic computation and utilities."""
 
+from typing import TYPE_CHECKING
+
 from .base import BaseTool, ToolResult
 from .registry import ToolRegistry, create_default_registry, create_react_registry
-from .retrieval_tool import RetrieveTool
 from .sympy_tools import (
     DifferentiateTool,
     IntegrateTool,
@@ -13,6 +14,10 @@ from .sympy_tools import (
     simplify_expr,
     solve_equation,
 )
+
+# RetrieveTool requires faiss; lazy import to avoid breaking tests
+if TYPE_CHECKING:
+    from .retrieval_tool import RetrieveTool
 
 __all__ = [
     "BaseTool",
@@ -30,3 +35,12 @@ __all__ = [
     "create_default_registry",
     "create_react_registry",
 ]
+
+
+def __getattr__(name: str):
+    """Lazy import for heavy dependencies."""
+    if name == "RetrieveTool":
+        from .retrieval_tool import RetrieveTool
+
+        return RetrieveTool
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
